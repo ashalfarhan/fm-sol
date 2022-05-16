@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
     <link
       rel="icon"
       type="image/png"
@@ -25,23 +26,23 @@
   <body>
     <div
       class="card"
-      x-init="handleFetch"
       x-data="{
-      quote: '',
-      id: 0,
-      loading: false,
-      async handleFetch() {
-        if (this.loading) return;
-        this.loading = true;
-        res = await fetch('https://api.adviceslip.com/advice').then(res => res.json()).catch(() => {
+        quote: '',
+        id: 0,
+        loading: false,
+        async handleFetch() {
+          if (this.loading) return;
+          this.loading = true;
+          res = await fetch('https://api.adviceslip.com/advice').then(res => res.json()).catch(() => {
+            this.loading = false;
+            return {slip: {advive: 'Oops!, Something went wrong 😥', id: 000}};
+          });
+          this.quote = JSON.stringify(res.slip.advice);
+          this.id = res.slip.id;
           this.loading = false;
-          return {slip: {advive: 'Oops!, Something went wrong 😥', id: 000};
-        });
-        this.quote = JSON.stringify(res.slip.advice);
-        this.id = res.slip.id;
-        this.loading = false;
-        }
+          }
       }"
+      x-init="handleFetch"
     >
       <p class="card-title">ADVICE #<span x-text="id"></span></p>
       <p class="card-quote" x-text="quote"></p>
