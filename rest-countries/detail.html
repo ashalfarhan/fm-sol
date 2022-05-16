@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+    <link rel="preconnect" href=" https://flagcdn.com" />
+    <link rel="preconnect" href=" https://flagcdn.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"
+    ></script>
+
+    <title>Frontend Mentor | REST Countries</title>
+  </head>
+  <body>
+    <main>
+      <nav
+        class="nav"
+        x-init="loadTheme"
+        x-data="{
+          theme: 'dark',
+          loadTheme() {
+            try {
+              this.theme = JSON.parse(localStorage.getItem('theme') ?? JSON.stringify('dark'))
+            } catch {
+              this.theme = 'dark'
+            }
+          },
+          toggleTheme() {
+            this.theme = this.theme === 'dark' ? 'light' : 'dark'
+          }
+        }"
+        x-effect="localStorage.setItem('theme', JSON.stringify(theme)); document.body.setAttribute('data-theme', theme)"
+      >
+        <div class="container nav-inner">
+          <h1>Where in the world?</h1>
+          <button class="theme-button" @click="toggleTheme">
+            <template x-if="theme == 'dark'">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-moon"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path>
+              </svg>
+            </template>
+            <template x-if="theme == 'light'">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-sun"
+              >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </template>
+            <span x-text="theme === 'dark' ? 'Dark Mode' : 'Light Mode'"></span>
+          </button>
+        </div>
+      </nav>
+      <section
+        class="container content"
+        x-data="{
+          country: null,
+          loading: false,
+          async loadCountry() {
+            baseUrl = 'https://restcountries.com/v3.1/';
+            url = new URLSearchParams(window.location.search);
+            this.loading = true;
+            try {
+              this.country = await fetch(baseUrl + 'name/' + url.get('name') + '?fields=region,capital,population,flags,name,subregion,tld,currencies,languages,borders')
+              .then(res => res.json())
+              .then(res => res[0]);
+            } catch {}
+            this.loading = false;
+          }
+        }"
+        x-init="loadCountry"
+      >
+        <div class="toolbar">
+          <button class="back-button" @click="window.history.back()">
+            <i data-feather="arrow-left" width="16"></i>
+            Back
+          </button>
+        </div>
+        <template x-if="loading">
+          <div class="loader-wrapper">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="loader"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather feather-loader"
+            >
+              <line x1="12" y1="2" x2="12" y2="6"></line>
+              <line x1="12" y1="18" x2="12" y2="22"></line>
+              <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+              <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+              <line x1="2" y1="12" x2="6" y2="12"></line>
+              <line x1="18" y1="12" x2="22" y2="12"></line>
+              <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+              <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+            </svg>
+          </div>
+        </template>
+        <div class="loader-wrapper" x-show="!loading && !country" x-transition>
+          <p>Oops!, Not Found.</p>
+        </div>
+        <template x-if="!!country">
+          <div class="country-detail">
+            <img :src="country.flags.png" :alt="country.name.common" />
+            <div class="country-content">
+              <h1 x-text="country.name.common"></h1>
+              <div class="country-stats detail">
+                <div class="country-stats-left">
+                  <div>
+                    <span class="stat-label">Native Name:</span>
+                    <template
+                      x-for="(key, i) in Object.keys(country.name.nativeName)"
+                    >
+                      <span
+                        class="stat-value"
+                        x-text="i !== 0 ? ', ' + country.name.nativeName[key]?.common : country.name.nativeName[key]?.common"
+                      ></span>
+                    </template>
+                  </div>
+                  <div>
+                    <span class="stat-label">Population:</span>
+                    <span
+                      class="stat-value"
+                      x-text="new Intl.NumberFormat().format(country.population)"
+                    ></span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Region:</span>
+                    <span class="stat-value" x-text="country.region"></span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Subregion:</span>
+                    <span class="stat-value" x-text="country.subregion"></span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Capital:</span>
+                    <span
+                      class="stat-value"
+                      x-text="country.capital?.join(', ')"
+                    ></span>
+                  </div>
+                </div>
+                <div class="country-stats-right">
+                  <div>
+                    <span class="stat-label">Top Level Domain:</span>
+                    <span
+                      class="stat-value"
+                      x-text="country.tld?.join(', ')"
+                    ></span>
+                  </div>
+                  <div>
+                    <span class="stat-label">Currencies:</span>
+                    <template
+                      x-for="(key, i) in Object.keys(country.currencies)"
+                    >
+                      <span
+                        x-text="i !== 0 ? ', ' + country.currencies[key].name : country.currencies[key].name"
+                      ></span>
+                    </template>
+                  </div>
+                  <div>
+                    <span class="stat-label">Languages:</span>
+                    <template
+                      x-for="(key, i) in Object.keys(country.languages)"
+                    >
+                      <span
+                        x-text="i !== 0 ? ', ' + country.languages[key] : country.languages[key]"
+                      ></span>
+                    </template>
+                  </div>
+                </div>
+              </div>
+              <div class="country-borders">
+                <span class="stat-label">Border Countries:</span>
+                <template x-for="border in country.borders">
+                  <button class="back-button" x-text="border"></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+      </section>
+      <footer class="attribution">
+        Challenge by
+        <p style="display: inline">
+          <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">
+            Frontend Mentor
+          </a>
+          . Coded by
+          <a href="https://github.com/ashalfarhan" target="_blank"
+            >Ashal Farhan</a
+          >.
+        </p>
+      </footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>

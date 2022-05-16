@@ -1,0 +1,157 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+:root {
+  /* Primary */
+  --ligt-cyan: hsl(193, 38%, 86%);
+  --neon-gray: hsl(150, 100%, 66%);
+  /* Neutral */
+  --gray-blue: hsl(217, 19%, 38%);
+  --dark-gray: hsl(217, 19%, 24%);
+  --dark-blue: hsl(218, 23%, 16%);
+  /* Fonts */
+  --font-size-quote: 28px;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-content: center;
+  font-family: 'Manrope', sans-serif;
+  background-color: var(--dark-blue);
+  color: var(--ligt-cyan);
+  place-items: center;
+}
+
+.card {
+  border-radius: 12px;
+  max-width: 440px;
+  min-height: 240px;
+  position: relative;
+  background-color: var(--dark-gray);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 520px) {
+  .card {
+    max-width: 320px;
+  }
+}
+
+.card-title {
+  color: var(--neon-gray);
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.3em;
+}
+
+@media only screen and (max-width: 520px) {
+  .card-title {
+    font-size: 12px;
+  }
+}
+
+.card-quote {
+  font-weight: bold;
+  font-size: 20px;
+  word-break: keep-all;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.skeleton {
+  display: block;
+  height: 18px;
+  background: var(--ligt-cyan);
+  margin-bottom: 12px;
+  border-radius: 9px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton:nth-child(2) {
+  width: 55%;
+  margin: 0 auto 12px;
+}
+
+.divider-desktop {
+  padding-bottom: 12px;
+}
+
+.divider-mobile {
+  display: none;
+  padding-bottom: 12px;
+}
+
+@media only screen and (max-width: 520px) {
+  .divider-mobile {
+    display: block;
+  }
+  .divider-desktop {
+    display: none;
+  }
+}
+
+.random-button {
+  position: absolute;
+  bottom: -24px;
+  right: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  border-radius: 100%;
+  background-color: var(--neon-gray);
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 300ms ease-in-out;
+}
+
+.random-button:hover {
+  box-shadow: 2px 2px 20px 0 var(--neon-gray);
+}
+
+.loader {
+  animation: spin 0.5s linear infinite;
+}
+
+.attribution {
+  margin-top: 48px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.attribution a {
+  color: var(--neon-gray);
+}
